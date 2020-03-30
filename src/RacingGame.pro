@@ -25,8 +25,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 LIBS += -lopengl32\
         -lglu32\
-        -lglut\
-        -lglut32
+        -lglut32\
+        -lglut
 #LIBS += -L$$PWD/../lib/ -lglut
 #LIBS += -L$$PWD/../lib/ -lglut32
 SOURCES += \
@@ -46,3 +46,7 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    shaderSource/fragmentshader.frag \
+    shaderSource/vertexshader.vert
