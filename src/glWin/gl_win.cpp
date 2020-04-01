@@ -4,11 +4,19 @@
 #include <glm/gtc/matrix_transform.hpp>
 #define STB_IMAGE_IMPLEMENTATION
 #include "common/stb_image.h"
+#include <qmath.h>
+
 gl_win::gl_win(QWidget *parent) :
     QOpenGLWidget(parent),
-    ui(new Ui::gl_win)
+    ui(new Ui::gl_win),
+    _timer(std::make_shared<QTimer>()),
+    fov(45.0)
 {
     ui->setupUi(this);
+    connect(_timer.get(),&QTimer::timeout,[=](){
+       this->update();
+    });
+    _timer->start(50);
 }
 
 gl_win::~gl_win()
@@ -30,20 +38,35 @@ void gl_win::initializeGL() {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)(6*sizeof(float)));
     glEnableVertexAttribArray(2);
-    viewMatrix = glm::lookAt(glm::vec3(0,0,2), glm::vec3(0,0,0), glm::vec3(0,1,0));
     initializeTexture("../src/image/container.jpg");
+    glEnable(GL_DEPTH_TEST);
 }
 
 void gl_win::resizeGL(int w, int h) {
     glViewport(0,0,w,h);
-    projectionMatrix = glm::perspective(45.0f, float(w) / float(h), 1.0f, 10.0f);
+    width = w;
+    height = h;
+    projectionMatrix = glm::perspective(fov, float(width) / float(height), 1.0f, 10.0f);
 }
+
 void gl_win::paintGL() {
+    static float i = 0.0;
     glClear(GL_COLOR_BUFFER_BIT);
+    viewMatrix = glm::lookAt(glm::vec3(2*glm::sin(glm::radians(i)), 2, 2*glm::cos(glm::radians(i))), glm::vec3(0,0,0), glm::vec3(0,1,0));
+    i++;
     viewProjectionMatrix = projectionMatrix * viewMatrix;
+    drawPlane(180, glm::vec3(1,0,0));//前
+    drawPlane(0, glm::vec3(1,0,0));//后
+    drawPlane(90,glm::vec3(1,0,0));//上
+    drawPlane(-90,glm::vec3(1,0,0));//下
+    drawPlane(90,glm::vec3(0,1,0));//左
+    drawPlane(-90,glm::vec3(0,1,0));//右
+}
+
+void gl_win::drawPlane(float a, glm::vec3 axis){
     glm::mat4 modelMatrix(1.0);
-    modelMatrix = glm::translate(modelMatrix,glm::vec3(0,0,0));
-    modelMatrix = glm::rotate(modelMatrix, float(glm::radians(-60.0)), glm::vec3(1,0,0));
+//    modelMatrix = glm::translate(modelMatrix,translate);
+    modelMatrix = glm::rotate(modelMatrix, float(glm::radians(a)), axis);
     modelViewProjectionMatrix = viewProjectionMatrix * modelMatrix;
     glUniformMatrix4fv(glGetUniformLocation(ID, "u_Matrix"), 1, false, glm::value_ptr(modelViewProjectionMatrix));
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -127,9 +150,17 @@ void gl_win::initializeTexture(const char *path){
         glGenerateMipmap(GL_TEXTURE_2D);
         glActiveTexture(GL_TEXTURE0);
         glUniform1i(glGetUniformLocation(ID,"ourTexture"), 0);
-        qDebug()<<"Get texture:";
     }else {
         qDebug()<<"Failed to load texture";
     }
     stbi_image_free(data);
+}
+
+void gl_win::wheelEvent(QWheelEvent *event) {
+    if(event->angleDelta().y() > 0){
+        fov+=0.1f;
+    }else{
+        fov-=0.1f;
+    }
+    projectionMatrix = glm::perspective(fov, float(width) / float(height), 1.0f, 10.0f);
 }
