@@ -39,6 +39,7 @@ SOURCES += \
         mainwindow.cpp
 
 HEADERS += \
+        common/stb_image.h \
         glWin/gl_win.h \
         mainwindow.h
 

@@ -12,6 +12,7 @@
 #include <sstream>
 #include <glm/glm.hpp>
 
+
 namespace Ui {
 class gl_win;
 }
@@ -31,18 +32,30 @@ private:
 
     unsigned int ID;
 
+    unsigned int texture;
+
     void initializeShader(const GLchar*vertexPath,const GLchar*fragmentPath);
 
-    float vertices[18] = {
-        -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f
+    float vertices[48] = {
+        //         0.0f, 0.0f,  0.0f, 1.0f, 1.0f, 1.0f,
+        //        -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+        //         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+        //         0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
+        //        -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+        //        -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f
+        0.0f,  0.0f,  0.0f, 1.0f, 1.0f, 1.0f, 0.5f, 0.5f,
+        -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+        0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+        -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+        -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f
     };
-
     glm::mat4 viewMatrix;//setLookAt
     glm::mat4 projectionMatrix;//perspective
     glm::mat4 viewProjectionMatrix;//=projectionMatrix * viewMatrix
     glm::mat4 modelViewProjectionMatrix;
+
+    void initializeTexture(const char*);
 };
 
 #endif // GL_WIN_H
