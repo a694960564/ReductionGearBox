@@ -36,12 +36,17 @@ LIBS += -lopengl32\
 SOURCES += \
         glWin/gl_win.cpp \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+        object/box/Box.cpp \
+        object/model/Model.cpp
 
 HEADERS += \
         common/stb_image.h \
         glWin/gl_win.h \
-        mainwindow.h
+        mainwindow.h \
+        object/Object.h \
+        object/box/Box.h \
+        object/model/Model.h
 
 FORMS += \
         glWin/gl_win.ui \
@@ -53,5 +58,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    shaderSource/fragmentshader.frag \
-    shaderSource/vertexshader.vert
+    object/box/fragmentshader.frag \
+    object/box/vertexshader.vert \
+    object/model/fragmentshader.frag \
+    object/model/vertexshader.vert

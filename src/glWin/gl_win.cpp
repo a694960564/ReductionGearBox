@@ -2,15 +2,13 @@
 #include "ui_gl_win.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#define STB_IMAGE_IMPLEMENTATION
-#include "common/stb_image.h"
 #include <qmath.h>
 
 gl_win::gl_win(QWidget *parent) :
     QOpenGLWidget(parent),
     ui(new Ui::gl_win),
-    _timer(std::make_shared<QTimer>()),
-    fov(45.0)
+    fov(45.0),
+    _timer(std::make_shared<QTimer>())
 {
     ui->setupUi(this);
     connect(_timer.get(),&QTimer::timeout,[=](){
@@ -26,54 +24,31 @@ gl_win::~gl_win()
 void gl_win::initializeGL() {
     initializeOpenGLFunctions();
     glClearColor(0,0,0,1);
-    initializeShader("../src/shaderSource/vertexshader.vert","../src/shaderSource/fragmentshader.frag");
-    unsigned int VBO;
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    qDebug()<<"sizeof(vertices):"<<sizeof(vertices);
-    glBufferData(GL_ARRAY_BUFFER, sizeof (vertices), vertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)(3*sizeof(float)));
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)(6*sizeof(float)));
-    glEnableVertexAttribArray(2);
-    initializeTexture("../src/image/container.jpg");
-    glEnable(GL_DEPTH_TEST);
+    initializeShader("../src/object/model/vertexshader.vert","../src/object/model/fragmentshader.frag");
+//    box = new Box(ID);
+//    box->initialize();
+    model = new Model(ID);
+    model->initialize();
 }
 
 void gl_win::resizeGL(int w, int h) {
     glViewport(0,0,w,h);
     width = w;
     height = h;
-    projectionMatrix = glm::perspective(fov, float(width) / float(height), 1.0f, 10.0f);
+    projectionMatrix = glm::perspective(fov, float(width) / float(height), 1.0f, 100.0f);
 }
 
 void gl_win::paintGL() {
     static float i = 0.0;
     glClear(GL_COLOR_BUFFER_BIT);
-    viewMatrix = glm::lookAt(glm::vec3(2*glm::sin(glm::radians(i)), 2, 2*glm::cos(glm::radians(i))), glm::vec3(0,0,0), glm::vec3(0,1,0));
+    viewMatrix = glm::lookAt(glm::vec3(10*glm::sin(glm::radians(i)), 0, 10*glm::cos(glm::radians(i))), glm::vec3(0,0,0), glm::vec3(0,1,0));
     i++;
     viewProjectionMatrix = projectionMatrix * viewMatrix;
-    drawPlane(180, glm::vec3(1,0,0));//前
-    drawPlane(0, glm::vec3(1,0,0));//后
-    drawPlane(90,glm::vec3(1,0,0));//上
-    drawPlane(-90,glm::vec3(1,0,0));//下
-    drawPlane(90,glm::vec3(0,1,0));//左
-    drawPlane(-90,glm::vec3(0,1,0));//右
+//    box->draw(viewProjectionMatrix);
+    model->draw(viewProjectionMatrix);
 }
 
-void gl_win::drawPlane(float a, glm::vec3 axis){
-    glm::mat4 modelMatrix(1.0);
-//    modelMatrix = glm::translate(modelMatrix,translate);
-    modelMatrix = glm::rotate(modelMatrix, float(glm::radians(a)), axis);
-    modelViewProjectionMatrix = viewProjectionMatrix * modelMatrix;
-    glUniformMatrix4fv(glGetUniformLocation(ID, "u_Matrix"), 1, false, glm::value_ptr(modelViewProjectionMatrix));
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-}
+
 
 void gl_win::initializeShader(const GLchar *vertexPath,const GLchar *fragmentPath){
     std::string vertexCode;
@@ -129,31 +104,6 @@ void gl_win::initializeShader(const GLchar *vertexPath,const GLchar *fragmentPat
     glUseProgram(ID);
     glDeleteShader(vertex);
     glDeleteShader(fragment);
-}
-
-void gl_win::initializeTexture(const char *path){
-    glGenTextures(1, &texture);
-    if(texture == 0){
-        qDebug()<<"Could not generate a new OpenGL texture object.";
-        return;
-    }
-    glBindTexture(GL_TEXTURE_2D, texture);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_REPEAT);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    int width, height, nrChannels;
-    unsigned char *data = stbi_load(path, &width, &height, &nrChannels, 0);
-    if(data){
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-        glActiveTexture(GL_TEXTURE0);
-        glUniform1i(glGetUniformLocation(ID,"ourTexture"), 0);
-    }else {
-        qDebug()<<"Failed to load texture";
-    }
-    stbi_image_free(data);
 }
 
 void gl_win::wheelEvent(QWheelEvent *event) {

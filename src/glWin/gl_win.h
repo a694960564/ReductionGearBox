@@ -13,7 +13,8 @@
 #include <glm/glm.hpp>
 #include <QWheelEvent>
 #include <QMouseEvent>
-
+#include "object/box/Box.h"
+#include "object/model/Model.h"
 namespace Ui {
 class gl_win;
 }
@@ -35,33 +36,20 @@ protected:
 private:
     Ui::gl_win *ui;
     unsigned int ID;
-    unsigned int texture;
     int width, height;
     float fov;
     std::shared_ptr<QTimer>_timer;
 
     void initializeShader(const GLchar*vertexPath,const GLchar*fragmentPath);
-    void initializeTexture(const char*);
-    void drawPlane(float a, glm::vec3 axis);
 
-    float vertices[48] = {
-        //         0.0f, 0.0f,  0.0f, 1.0f, 1.0f, 1.0f,
-        //        -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-        //         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-        //         0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
-        //        -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-        //        -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f
-        0.0f,  0.0f,  -0.5f, 1.0f, 1.0f, 1.0f, 0.5f, 0.5f,
-        -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-        0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f
-    };
     glm::mat4 viewMatrix;//setLookAt
     glm::mat4 projectionMatrix;//perspective
     glm::mat4 viewProjectionMatrix;//=projectionMatrix * viewMatrix
     glm::mat4 modelViewProjectionMatrix;
+
+private:
+    Box* box;
+    Model* model;
 };
 
 #endif // GL_WIN_H
