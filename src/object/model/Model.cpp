@@ -9,14 +9,23 @@ Model::Model(unsigned int&id):Object(&id)
 
 void Model::initialize(){
     initializeOpenGLFunctions();
-    readSTL("../stl/BigGear.STL");
-    unsigned int VBO;
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    float* verts,* vnorms;
+    readSTL("../stl/BigGear.STL",verts, vnorms);
+    unsigned int VBO[2];
+    glGenBuffers(2, VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
     glBufferData(GL_ARRAY_BUFFER, sizeof (float)*3*numofvertex, verts, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof (float)*3*numofvertex, vnorms, GL_STATIC_DRAW);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
     glEnable(GL_DEPTH_TEST);
+    delete verts;
+    delete vnorms;
+    float lightPos[3] = {100, 100, 100};
+    glUniform3fv(glGetUniformLocation(*ID, "lightPos"), 3, lightPos);
 }
 
 void Model::draw(glm::mat4 &viewProjectionMatrix){
@@ -25,6 +34,7 @@ void Model::draw(glm::mat4 &viewProjectionMatrix){
 //    modelMatrix = glm::translate(modelMatrix,translate);
     modelMatrix = glm::rotate(modelMatrix, float(glm::radians(a++)), glm::vec3(0,0,1));
     modelMatrix = glm::scale(modelMatrix, glm::vec3(0.1,0.1,0.1));
+    glUniformMatrix4fv(glGetUniformLocation(*ID, "u_model"), 1, false,glm::value_ptr(modelMatrix));
     glm::mat4 modelViewProjectionMatrix = viewProjectionMatrix * modelMatrix;
     glUniformMatrix4fv(glGetUniformLocation(*ID, "u_Matrix"), 1, false, glm::value_ptr(modelViewProjectionMatrix));
     glDrawArrays(GL_TRIANGLES, 0, numofvertex);
@@ -32,7 +42,7 @@ void Model::draw(glm::mat4 &viewProjectionMatrix){
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-void Model::readSTL(const GLchar *path){
+void Model::readSTL(const GLchar *path,float*& verts,float*& vnorms){
     int max = 0;
     bool isbegin = false;
     long size = 0;

@@ -9,10 +9,8 @@ public:
     void initialize();
     void draw(glm::mat4&);
 private:
-    void readSTL(const GLchar*);
+    void readSTL(const GLchar*,float*&, float*&);
     int numofvertex;
-    float* verts;
-    float* vnorms;
     //数组最大值最小值
     float m_fmaxmin[6];
 };

@@ -35,20 +35,18 @@ void gl_win::resizeGL(int w, int h) {
     glViewport(0,0,w,h);
     width = w;
     height = h;
-    projectionMatrix = glm::perspective(fov, float(width) / float(height), 1.0f, 100.0f);
 }
 
 void gl_win::paintGL() {
     static float i = 0.0;
     glClear(GL_COLOR_BUFFER_BIT);
+    projectionMatrix = glm::perspective(fov, float(width) / float(height), 1.0f, 100.0f);
     viewMatrix = glm::lookAt(glm::vec3(10*glm::sin(glm::radians(i)), 0, 10*glm::cos(glm::radians(i))), glm::vec3(0,0,0), glm::vec3(0,1,0));
     i++;
     viewProjectionMatrix = projectionMatrix * viewMatrix;
 //    box->draw(viewProjectionMatrix);
     model->draw(viewProjectionMatrix);
 }
-
-
 
 void gl_win::initializeShader(const GLchar *vertexPath,const GLchar *fragmentPath){
     std::string vertexCode;
