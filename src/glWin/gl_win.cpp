@@ -25,29 +25,24 @@ void gl_win::initializeGL() {
     initializeOpenGLFunctions();
     glClearColor(0,0,0,1);
     initializeShader("../src/object/model/vertexshader.vert","../src/object/model/fragmentshader.frag");
-//    box = new Box(ID);
-//    box->initialize();
-    model = new Model(ID);
-    model->initialize();
+    gearBox = new GearBox(ID);
+    gearBox->initialize(glm::mat4(1.0));
 }
 
 void gl_win::resizeGL(int w, int h) {
     glViewport(0,0,w,h);
-    width = w;
-    height = h;
 }
 
 void gl_win::paintGL() {
     static float i = 0.0;
-    glClear(GL_COLOR_BUFFER_BIT);
-    projectionMatrix = glm::perspective(fov, float(width) / float(height), 1.0f, 1000.0f);
-    glm::vec3 camera = {100*glm::sin(glm::radians(i)), 100, 100*glm::cos(glm::radians(i))};
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    projectionMatrix = glm::perspective(fov, float(this->width()) / float(this->height()), 1.0f, 1000.0f);
+    glm::vec3 camera = {200*glm::sin(glm::radians(i)), 0.0, 200*glm::cos(glm::radians(i))};
     viewMatrix = glm::lookAt(camera, glm::vec3(0,0,0), glm::vec3(0,1,0));
-//    i++;
+    i++;
     viewProjectionMatrix = projectionMatrix * viewMatrix;
-//    box->draw(viewProjectionMatrix);
-    model->viewPos = camera;
-    model->draw(viewProjectionMatrix);
+    gearBox->viewPos = camera;
+    gearBox->draw(viewProjectionMatrix);
 }
 
 void gl_win::initializeShader(const GLchar *vertexPath,const GLchar *fragmentPath){
@@ -112,5 +107,5 @@ void gl_win::wheelEvent(QWheelEvent *event) {
     }else{
         fov-=0.1f;
     }
-    projectionMatrix = glm::perspective(fov, float(width) / float(height), 1.0f, 10.0f);
+    projectionMatrix = glm::perspective(fov, float(this->width()) / float(this->height()), 1.0f, 10.0f);
 }

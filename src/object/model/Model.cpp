@@ -2,15 +2,21 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-Model::Model(unsigned int&id):Object(&id)
+Model::Model(const unsigned int&id,const GLchar* path, const glm::vec3& color):
+    Object(&id),
+    color(color),
+    path(path),
+    modelMatrix(glm::mat4(1.0))
 {
 }
-
-void Model::initialize(){
+Model::~Model(){
+    delete verts;
+    delete vnorms;
+}
+void Model::initialize(const glm::mat4& modelMatrix){
     initializeOpenGLFunctions();
-    float* verts,* vnorms;
-    readSTL("../stl/BigGear.STL",verts, vnorms);
-    unsigned int VBO[2];
+    this->modelMatrix = modelMatrix;
+    readSTL(path, verts, vnorms);
     glGenBuffers(2, VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
     glBufferData(GL_ARRAY_BUFFER, sizeof (float)*3*numofvertex, verts, GL_STATIC_DRAW);
@@ -21,25 +27,33 @@ void Model::initialize(){
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
     glEnable(GL_DEPTH_TEST);
-    delete verts;
-    delete vnorms;
 }
 
-void Model::draw(glm::mat4 &viewProjectionMatrix){
-    glm::mat4 modelMatrix(1.0);
-    static float a = 0.0;
-    glUniform3f(glGetUniformLocation(*ID, "lightPos"), 100*sin(glm::radians(a)), 0, 100*cos(glm::radians(a)));
-    modelMatrix = glm::rotate(modelMatrix, float(glm::radians(a)), glm::vec3(0,0,1));
-    a++;
+void Model::rotate(float degree, const glm::vec3& vector){
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(degree), vector);
+}
+
+void Model::translate(const glm::vec3 & vector){
+    modelMatrix = glm::translate(modelMatrix, vector);
+}
+
+void Model::draw(const glm::mat4 &viewProjectionMatrix){
+    glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof (float)*3*numofvertex, verts, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof (float)*3*numofvertex, vnorms, GL_STATIC_DRAW);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
+
+    glUniform3fv(glGetUniformLocation(*ID, "u_ObjectColor"), 1, glm::value_ptr(color));
     glUniformMatrix4fv(glGetUniformLocation(*ID, "u_model"), 1, false,glm::value_ptr(modelMatrix));
-    glUniform3fv(glGetUniformLocation(*ID, "viewPos"), 1, glm::value_ptr(viewPos));
-//    glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMatrix)));
-//    glUniformMatrix4fv(glGetUniformLocation(*ID, "u_normalMatrix"), 1, false,glm::value_ptr(normalMatrix));
     glm::mat4 modelViewProjectionMatrix = viewProjectionMatrix * modelMatrix;
     glUniformMatrix4fv(glGetUniformLocation(*ID, "u_Matrix"), 1, false, glm::value_ptr(modelViewProjectionMatrix));
     glDrawArrays(GL_TRIANGLES, 0, numofvertex);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-//    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void Model::readSTL(const GLchar *path,float*& verts,float*& vnorms){

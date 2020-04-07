@@ -37,6 +37,7 @@ SOURCES += \
         glWin/gl_win.cpp \
         main.cpp \
         mainwindow.cpp \
+        object/GearBox.cpp \
         object/box/Box.cpp \
         object/model/Model.cpp
 
@@ -44,6 +45,7 @@ HEADERS += \
         common/stb_image.h \
         glWin/gl_win.h \
         mainwindow.h \
+        object/GearBox.h \
         object/Object.h \
         object/box/Box.h \
         object/model/Model.h

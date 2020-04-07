@@ -1,2 +1,2 @@
-# RacingGame
-Racing Game Base on OpenGL
+# Reduction GearBox
+Reduction GearBox Base on OpenGL

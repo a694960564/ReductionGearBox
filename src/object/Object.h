@@ -4,10 +4,10 @@
 #include <glm/glm.hpp>
 class Object : protected QOpenGLExtraFunctions{
 protected:
-    explicit Object(unsigned int* id):ID(id){}
+    explicit Object(const unsigned int* id):ID(id){}
     virtual ~Object(){}
-    virtual void initialize() = 0;
-    virtual void draw(glm::mat4&) = 0;
-    unsigned int* ID;
+    virtual void initialize(const glm::mat4& modelMatrix) = 0;
+    virtual void draw(const glm::mat4& viewProjectionMatrix) = 0;
+    const unsigned int* ID;
 };
 #endif // OBJECT_H

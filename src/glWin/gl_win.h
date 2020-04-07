@@ -15,6 +15,7 @@
 #include <QMouseEvent>
 #include "object/box/Box.h"
 #include "object/model/Model.h"
+#include "object/GearBox.h"
 namespace Ui {
 class gl_win;
 }
@@ -36,7 +37,6 @@ protected:
 private:
     Ui::gl_win *ui;
     unsigned int ID;
-    int width, height;
     float fov;
     std::shared_ptr<QTimer>_timer;
 
@@ -48,8 +48,7 @@ private:
     glm::mat4 modelViewProjectionMatrix;
 
 private:
-    Box* box;
-    Model* model;
+    GearBox* gearBox;
 };
 
 #endif // GL_WIN_H
