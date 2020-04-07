@@ -40,11 +40,13 @@ void gl_win::resizeGL(int w, int h) {
 void gl_win::paintGL() {
     static float i = 0.0;
     glClear(GL_COLOR_BUFFER_BIT);
-    projectionMatrix = glm::perspective(fov, float(width) / float(height), 1.0f, 100.0f);
-    viewMatrix = glm::lookAt(glm::vec3(10*glm::sin(glm::radians(i)), 0, 10*glm::cos(glm::radians(i))), glm::vec3(0,0,0), glm::vec3(0,1,0));
-    i++;
+    projectionMatrix = glm::perspective(fov, float(width) / float(height), 1.0f, 1000.0f);
+    glm::vec3 camera = {100*glm::sin(glm::radians(i)), 100, 100*glm::cos(glm::radians(i))};
+    viewMatrix = glm::lookAt(camera, glm::vec3(0,0,0), glm::vec3(0,1,0));
+//    i++;
     viewProjectionMatrix = projectionMatrix * viewMatrix;
 //    box->draw(viewProjectionMatrix);
+    model->viewPos = camera;
     model->draw(viewProjectionMatrix);
 }
 

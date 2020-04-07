@@ -8,6 +8,7 @@ public:
     Model(unsigned int& id);
     void initialize();
     void draw(glm::mat4&);
+    glm::vec3 viewPos;
 private:
     void readSTL(const GLchar*,float*&, float*&);
     int numofvertex;
