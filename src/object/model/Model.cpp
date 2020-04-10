@@ -4,9 +4,9 @@
 
 Model::Model(const unsigned int&id,const GLchar* path, const glm::vec3& color):
     Object(&id),
-    color(color),
     path(path),
-    modelMatrix(glm::mat4(1.0))
+    modelMatrix(glm::mat4(1.0)),
+    color(color)
 {
 }
 Model::~Model(){
