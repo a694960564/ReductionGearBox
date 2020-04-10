@@ -1,3 +1,3 @@
 # Reduction GearBox
-Reduction GearBox Base on OpenGL\n
+Reduction GearBox Base on OpenGL
 ![image](image/gear.png)
