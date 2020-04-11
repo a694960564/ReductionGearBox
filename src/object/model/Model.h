@@ -11,6 +11,7 @@ public:
     void draw(const glm::mat4&);
     void rotate(float degree,const glm::vec3&);
     void translate(const glm::vec3&);
+    void IdentityTranslate(const glm::vec3 & vector);
 private:
     void readSTL(const GLchar*,float*&, float*&);
     int numofvertex;

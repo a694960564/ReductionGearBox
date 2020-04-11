@@ -37,14 +37,19 @@ void Model::translate(const glm::vec3 & vector){
     modelMatrix = glm::translate(modelMatrix, vector);
 }
 
+void Model::IdentityTranslate(const glm::vec3 & vector){
+    modelMatrix = glm::mat4(1.0);
+    modelMatrix = glm::translate(modelMatrix, vector);
+}
+
 void Model::draw(const glm::mat4 &viewProjectionMatrix){
     glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
     glBufferData(GL_ARRAY_BUFFER, sizeof (float)*3*numofvertex, verts, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)nullptr);
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
     glBufferData(GL_ARRAY_BUFFER, sizeof (float)*3*numofvertex, vnorms, GL_STATIC_DRAW);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)nullptr);
     glEnableVertexAttribArray(1);
 
     glUniform3fv(glGetUniformLocation(*ID, "u_ObjectColor"), 1, glm::value_ptr(color));
