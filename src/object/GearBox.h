@@ -17,6 +17,10 @@ private:
     std::unique_ptr<Model>bearing;
     std::unique_ptr<Model>box;
     std::unique_ptr<Model>gearRing;
+    float centerStep = 0.6f, globalStep = 0.1f,
+    planetStep = 0.15f;
+    float globalSum = 0.0, planetSum = 0.0;
+    const float a = 58.47f, b = 33.75f, c = 67.5f;
 };
 
 #endif // GEARBOX_H
