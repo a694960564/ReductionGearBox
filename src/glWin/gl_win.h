@@ -47,7 +47,7 @@ private:
     glm::mat4 viewProjectionMatrix;//=projectionMatrix * viewMatrix
     glm::mat4 modelViewProjectionMatrix;
 
-private:
+public:
     GearBox* gearBox;
 };
 

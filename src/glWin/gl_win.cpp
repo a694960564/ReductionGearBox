@@ -14,7 +14,7 @@ gl_win::gl_win(QWidget *parent) :
     connect(_timer.get(),&QTimer::timeout,[=](){
        this->update();
     });
-    _timer->start(20);
+    _timer->start(5);
 }
 
 gl_win::~gl_win()
@@ -37,9 +37,10 @@ void gl_win::paintGL() {
     static float i = 0.0;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     projectionMatrix = glm::perspective(fov, float(this->width()) / float(this->height()), 1.0f, 10000.0f);
-    glm::vec3 camera = {500*glm::sin(glm::radians(i)), 0.0, -500*glm::cos(glm::radians(i))};
+//    glm::vec3 camera = {500*glm::sin(glm::radians(i)), 0.0, -500*glm::cos(glm::radians(i))};
+    glm::vec3 camera = {500, 0.0, -500};
     viewMatrix = glm::lookAt(camera, glm::vec3(0,0,0), glm::vec3(0,1,0));
-//    i++;
+    i++;
     viewProjectionMatrix = projectionMatrix * viewMatrix;
     gearBox->viewPos = camera;
     gearBox->draw(viewProjectionMatrix);

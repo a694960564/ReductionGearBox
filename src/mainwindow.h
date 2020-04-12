@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "glWin\gl_win.h"
+#include "Controler.h"
 
 namespace Ui {
 class MainWindow;

@@ -34,6 +34,7 @@ LIBS += -lopengl32\
 #LIBS += -L$$PWD/../lib/ -lglut
 #LIBS += -L$$PWD/../lib/ -lglut32
 SOURCES += \
+        Controler.cpp \
         glWin/gl_win.cpp \
         main.cpp \
         mainwindow.cpp \
@@ -42,6 +43,7 @@ SOURCES += \
         object/model/Model.cpp
 
 HEADERS += \
+        Controler.h \
         common/stb_image.h \
         glWin/gl_win.h \
         mainwindow.h \
@@ -51,6 +53,7 @@ HEADERS += \
         object/model/Model.h
 
 FORMS += \
+        Controler.ui \
         glWin/gl_win.ui \
         mainwindow.ui
 
